@@ -1,0 +1,110 @@
+You can find this system on RunUO @ http://runuo.com/community/threads/completely-automated-staff-team-oh-yes-i-did.460720/
+
+Tired of those corrupt staff team members? Tired of players complaining that no staff members are on? Well, here is your very own automated staff team. (I swore I wasn't going to release this, but I assume many smaller shards will benefit from this - BIG TIME. ) Correct me if I'm wrong 
+
+What these guys will do for you
+- Unstuck your characters by casting a gate out (limited).
+- Take suggestions and record them.
+- File harassment claims via email.
+- Answer general UO questions, even opening browser to UO Guide's pages for additional help.
+- WHATEVER ELSE YOU WANT TO PROGRAM THEM TO DO! IT'S ENDLESS!
+
+How They Work
+- Player clicks the help button.
+- GM appears (random human name, dependant on the sex they are -also random.)
+- Key words list appears as a gump. These are the words the staff member responds to. I've pre-scripted about 16 actions for you already. You can put in as many as you'de like, they are easy.
+- Player uses a key word, staff member reacts. You can find these actions in StaffBot.cs.
+- Pages by default are limited to once every hour. This is easily changed, and marked in the script.
+- Staff member will only put one gate out if player is stuck, until they page another staff member. If the gate has already been placed, they will simply say that they are out of mana for the next hour (by default).
+
+What these guys WON'T DO
+- They won't EVER log off.
+- They will never turn corrupt, and ruin your shard.
+- They won't ever ask for anything in return, they are happy as pie doing what they do 
+
+Installation
+I tried to make this as easy as possible, and yes, you can even disable this system in the Core folder, and it will use the original help system. Simple huh?
+
+- Replace your HelpGump.cs with the one provided.
+- Drop the other folders in your Scripts directory.
+- Couple of PlayerMobile.cs changes. I tried to avoid it, but I really hate using item timers, and switched the system to use inline. I did this for the stability of the system 
+
+Core changes
+Open PlayerMobile.cs, and find
+
+Code:
+[CommandProperty(AccessLevel.GameMaster)]
+        public TimeSpan NpcGuildGameTime
+        {
+            get { return m_NpcGuildGameTime; }
+            set { m_NpcGuildGameTime = value; }
+        }
+Add UNDER IT
+
+Code:
+[CommandProperty(AccessLevel.GameMaster)]
+        public DateTime LastTimePaged
+        {
+            get { return m_LastTimePaged; }
+            set { m_LastTimePaged = value; }
+        }
+then find
+
+?
+Code:
+private List<Mobile> m_RecentlyReported;
+
+?
+?Add UNDER IT
+
+Code:
+private DateTime m_LastTimePaged;
+
+
+Deserialize (Please correct this if I'm wrong, because I did not do it this way - I installed on a fresh install of RunUO to test it!!! )
+
+
+Find
+
+
+Code:
+case 29:
+
+{
+
+m_VASTotalMonsterFame = reader.ReadInt();
+
+goto case 28;
+
+}
+Add above this (Please note the case numbers, your's may differ. This is done on a base PlayerMobile.cs with no mods beforehand. Really trying to make this easy for you.
+
+Code:
+case 30:
+
+{
+
+m_LastTimePaged = reader.ReadDateTime();
+
+goto case 29;
+
+}
+Serialize (Again, please correct me if I'm wrong.)
+
+Find
+
+Code:
+writer.Write((int)29); // version
+Change It To
+
+Code:
+writer.Write((int)30); // version
+Find
+
+Code:
+writer.Write((TimeSpan)m_NpcGuildGameTime);
+Add Under
+
+Code:
+writer.Write((DateTime)m_LastTimePaged);
+And there you have it, your very own completely automated staff team! I hope they treat you well, they have been serving happily on my new project for a week with no complaints!
